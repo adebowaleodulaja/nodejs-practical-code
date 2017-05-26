@@ -1,0 +1,25 @@
+{
+  "name": "node-todo-api",
+  "version": "1.0.0",
+  "description": "todo api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brownwood/nodejs-practical-code.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brownwood/nodejs-practical-code/issues"
+  },
+  "homepage": "https://github.com/brownwood/nodejs-practical-code#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "mysql": "^2.13.0",
+    "promise-mysql": "^3.0.1"
+  }
+}
