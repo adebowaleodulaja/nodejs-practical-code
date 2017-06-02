@@ -4,8 +4,8 @@ var connection;
 var dbConn = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'passw0rd',
-    database: 'todoapi'
+    password: 'password',
+    database: 'todoapp'
 }).then(function (conn) {
     return connection = conn;
     //console.log('Connection ID... ' + connection.threadId);
