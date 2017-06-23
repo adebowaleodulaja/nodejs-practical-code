@@ -5,7 +5,8 @@ var connect = require('../utils/dbConnection');
 
 var app = express();
 var connection;
-var todos = {};
+const port = process.env.PORT || 3000;
+//var todos = {};
 
 app.use(bodyParser.json());
 
@@ -71,8 +72,8 @@ app.get('/todos/:id', (req, res) => {
     });
 });
 
-app.listen(3000, () => {
-    console.log('Started on port 3000');
+app.listen(port, () => {
+    console.log(`Started on port ${port}`);
 });
 
 module.exports = { app };
