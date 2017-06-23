@@ -1,0 +1,55 @@
+=====NODE JS=====
+Node.js was installed at
+
+   /usr/local/bin/node
+
+npm was installed at
+
+   /usr/local/bin/npm
+
+Make sure that /usr/local/bin is in your $PATH.
+
+We use require to load in modules
+
+The command line utility that allows nodejs code to run automatically while you make change is Nodemon and how it’s install is by running npm install nodemon -g (the -g stands for global and it’s installed in the nodejs directory).
+
+Yargs was also used. Yargs helps build interactive command line tools by parsing arguments and generating an elegant user interface. 
+
+npm init will create a json.package file in the working directory
+
+You can use JSON.stringify(param1, param2, param3) to format object that needs to be printed on the screen.
+
+Express- framework in nodejs to build web app.
+hbs is a templating framework. Under hbs, we have what we called partial which is a partial piece of a website.
+
+=====GIT====
+git init- this needs to be executed from the root of your project
+git add . - use this to tell Git the files you want to keep track of.
+git status- to get the status of your git repo
+
+To commit, use git commit -m (message) ‘themessage’ 
+To push to GitHub, use git push
+
+—Generating SSH Key—
+ls -al ~/ .ssh would check if there’s ssh
+to make a key 
+	ssh-keygen -t rsa -b(byte) 4096 -C ‘email’
+eval “$(ssh-agent -s)” will start the ssh agent service
+To specify where the ssh file leaves you enter - ssh-add ~/ .ssh/id_rsa
+
+=====Testing Node Applications=====
+We’d be installing a module called mochajs.org
+install it as npm install mocha —save-dev
+
+Running the code using nodemon for mocha, use nodemon —exec ‘name of command’ e. nodemon —exec ’nom test’
+
+===Testing the TODO App===
+Installed Expect (for assertions) mocha (for the test swift) npm i install expect mocha superset —save-dev
+
+
+
+===Things to be done for uploading to Heroku===
+1.  Tell Heroku how to startup the project by including the "start" command under the script section of package.json file. This tells Heroku
+    This is the command that'd be run when Heroku needs to start the application.
+2.  Tell Heroku the version of Node you'd like to use. This is done by specifying the engines property in the package.json file.
+    
