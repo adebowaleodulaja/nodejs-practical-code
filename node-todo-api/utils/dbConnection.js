@@ -1,7 +1,7 @@
 var mysql = require('promise-mysql');
 var connection;
 
-var dbConn = mysql.createConnection({
+var dbConn = mysql.createConnection(process.env.JAWSDB_URL || {
     host: 'localhost',
     user: 'root',
     password: 'password',

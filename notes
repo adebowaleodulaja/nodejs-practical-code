@@ -26,6 +26,9 @@ hbs is a templating framework. Under hbs, we have what we called partial which i
 git init- this needs to be executed from the root of your project
 git add . - use this to tell Git the files you want to keep track of.
 git status- to get the status of your git repo
+git commit -am 'comment'
+git push
+
 
 To commit, use git commit -m (message) ‘themessage’ 
 To push to GitHub, use git push
@@ -52,4 +55,6 @@ Installed Expect (for assertions) mocha (for the test swift) npm i install expec
 1.  Tell Heroku how to startup the project by including the "start" command under the script section of package.json file. This tells Heroku
     This is the command that'd be run when Heroku needs to start the application.
 2.  Tell Heroku the version of Node you'd like to use. This is done by specifying the engines property in the package.json file.
-    
+3.  Setup a database.
+heroku config - use to list configuration
+
