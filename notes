@@ -57,4 +57,5 @@ Installed Expect (for assertions) mocha (for the test swift) npm i install expec
 2.  Tell Heroku the version of Node you'd like to use. This is done by specifying the engines property in the package.json file.
 3.  Setup a database.
 heroku config - use to list configuration
+heroku logs
 

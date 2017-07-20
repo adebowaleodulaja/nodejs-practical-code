@@ -1,5 +1,7 @@
-var express = require('express');
-var bodyParser = require('body-parser');//Parses the body to the server as a JSON and converts it to an object.
+const _ = require('lodash');
+const express = require('express');
+const bodyParser = require('body-parser');//Parses the body to the server as a JSON and converts it to an object.
+const validator = require('validator');
 
 var connect = require('../utils/dbConnection');
 
@@ -72,8 +74,93 @@ app.get('/todos/:id', (req, res) => {
     });
 });
 
+//Delete a todo
+app.get('/todos/:id', (req, res) => {
+    //res.send(req.params);
+    connect.dbConn.then((conn) => {
+        var sql = `DELETE FROM todos WHERE id = ${conn.escape(req.params.id)}`;
+        //console.log(`SQL String ${sql}`);
+        return conn.query(sql);
+    }).then((rows) => {
+        if (rows.length != 0) {
+            res.send({
+                message: "Request Successful",
+                result: rows.affectedRows + " row(s) was deleted!"
+            });
+        }
+        else {
+            res.status(404).send({
+                message: "Request Failed",
+                reason: "No such todo with id " + req.params.id
+            });
+        }
+    }).catch((error) => {
+        res.status(400).send(error);
+        console.log('An error occurred...' + error);
+    });
+});
+
+//Update a todo (Basically patch is used for UPDATE in a standard API dev)
+app.patch('/todos/:id', (req, res) => {
+    var date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') // replace T with a space
+    var theID = req.params.id;
+    var body = _.pick(req.body, ['text', 'completed']);//Pick method from lodash is used to pull off certain keys from a json.
+
+    connect.dbConn.then((conn) => {
+        //Checking to see if body.completed value is boolean, if yes and it's set to true, update the completedAt.
+        if (_.isBoolean(body.completed) && body.completed) {
+            body.completedAt = date;//new Date().getTime();
+        } else {
+            body.completed = 'false';
+            body.completedAt = null;
+        }
+        //var sql = `UPDATE todos SET completed = ?, completedAt = ? WHERE id = ? [${body.completed},${body.completedAt},${conn.escape(theID)}]`;
+        //console.log(`SQL Query ${sql}`);
+        return conn.query('UPDATE todos SET completed = ?, completedAt = ? WHERE id = ?', [body.completed.toString(), body.completedAt, theID]);
+    }).then((rows) => {
+        console.log(rows.affectedRows);
+        if (rows.length != 0) {
+            res.send({
+                message: "Request Successful",
+                result: rows.affectedRows + " row(s) was updated!"
+            });
+        }
+        else {
+            res.status(404).send({
+                message: "Request Failed",
+                reason: "No such todo with id " + req.params.id
+            });
+        }
+    }).catch((error) => {
+        res.status(400).send(error);
+        console.log('An error occurred...' + error);
+    });
+});
+
+//Takes URL and the callback parameter
+app.post('/newuser', (req, res) => {
+    var postData = { uname: req.body.username, upassword: req.body.password, uage: req.body.age, location: req.body.location };
+    connect.dbConn.then(function (conn) {
+        connection = conn;
+        if (validator.isEmail(req.body.username)){
+            return conn.query('INSERT INTO users SET ?', postData);
+        }else{
+            res.send({ message: `${req.body.username} is not a valid email address!` });
+            return;
+        }
+    }).then(function (rows) {
+        res.send({ message: `New user ${req.body.username} has been created successfully` });
+        console.log('New user inserted...');
+        console.log(rows);
+    }).catch((error) => {
+        res.status(400).send(error);
+        console.log('An error occurred...' + error);
+    });
+    console.log("body_request",req.body);
+});
+
 app.listen(port, () => {
-    console.log(`Started on port ${port}`);
+    console.log(`Started on port: ${port}`);
 });
 
 module.exports = { app };
