@@ -59,3 +59,10 @@ Installed Expect (for assertions) mocha (for the test swift) npm i install expec
 heroku config - use to list configuration
 heroku logs
 
+===Security===
+We Cryptojs for hashing when it comes to Security (This is the node.js actual way of securing our web application,
+there are better ways to doing this using some libraies out there, the one we'd be using is jsonwebtoken).
+npm i crypto-js --save (use --save-dev for saving the dependency as a dev dependency).
+npm i jsonwebtoken --save
+You can validate your token from jwt.io by pasting in the signed data.
+

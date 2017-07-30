@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');//Parses the body to the server as a J
 const validator = require('validator');
 
 var connect = require('../utils/dbConnection');
+const authToken = require('../utils/genAuthToken');
+const {findByToken} = require('../middleware/authenticate');
 
 var app = express();
 var connection;
@@ -140,24 +142,30 @@ app.patch('/todos/:id', (req, res) => {
 //Takes URL and the callback parameter
 app.post('/newuser', (req, res) => {
     var postData = { uname: req.body.username, upassword: req.body.password, uage: req.body.age, location: req.body.location };
+    var atoken = authToken.generateAuthToken(req.body.username);
+
     connect.dbConn.then(function (conn) {
         connection = conn;
-        if (validator.isEmail(req.body.username)){
+        console.log('Token from generateAuthToken', atoken);
+        if (validator.isEmail(req.body.username)) {
             return conn.query('INSERT INTO users SET ?', postData);
-        }else{
-            res.send({ message: `${req.body.username} is not a valid email address!` });
-            return;
+        } else {
+            return res.send({ message: `${req.body.username} is not a valid email address!` });
         }
     }).then(function (rows) {
-        res.send({ message: `New user ${req.body.username} has been created successfully` });
+        res.header('x-auth', atoken).send({ message: `New user ${req.body.username} has been created successfully` });
+        //res.header('x-auth', atoken);
         console.log('New user inserted...');
         console.log(rows);
     }).catch((error) => {
-        res.status(400).send(error);
+        if (error) { return res.status(400).send(error); }
         console.log('An error occurred...' + error);
     });
-    console.log("body_request",req.body);
+    console.log("body_request", req.body);
 });
+
+//API route to verify authentication per user.
+app.get('/users/me', findByToken);
 
 app.listen(port, () => {
     console.log(`Started on port: ${port}`);
