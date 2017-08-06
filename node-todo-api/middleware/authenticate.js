@@ -6,7 +6,7 @@ const { verifyAuthToken } = require('../utils/genAuthToken');
     return jwt.verify(tokenToVerify, 'abc123');
 };*/
 
-var findByToken = function (req, res, next) {
+var authenticate = function (req, res, next) {
     var token = req.header('x-auth');
     var decoded;
 
@@ -19,11 +19,14 @@ var findByToken = function (req, res, next) {
     }
 
     connect.dbConn.then((conn) => {
-        var sql = `SELECT * FROM users WHERE token = ${conn.escape(token)} AND uname = ${conn.escape(decoded.username)}`;
+        //var sql = `SELECT * FROM users WHERE token = ${conn.escape(token)} AND uname = ${conn.escape(decoded.username)}`;
+        var sql = `SELECT * FROM users WHERE uname = ${conn.escape(decoded.username)}`;
         return conn.query(sql);
     }).then((rows) => {
         if (rows.length != 0) {
-            res.send({ todos: rows });
+            //res.send({ todos: rows });
+            req.token = token;
+            req.username = decoded.username;
             next();
         }
         else {
@@ -38,4 +41,4 @@ var findByToken = function (req, res, next) {
     });
 };
 
-module.exports = { findByToken };
+module.exports = { authenticate };

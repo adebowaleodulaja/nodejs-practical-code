@@ -23,11 +23,11 @@ Express- framework in nodejs to build web app.
 hbs is a templating framework. Under hbs, we have what we called partial which is a partial piece of a website.
 
 =====GIT====
-git init- this needs to be executed from the root of your project
-git add . - use this to tell Git the files you want to keep track of.
-git status- to get the status of your git repo
+git init - this needs to be executed from the root of your project
+git add . - use this to tell Git the files you want to keep track of(. will track all files and folders in the working dir).
+git status - to get the status of your git repo
 git commit -am 'comment'
-git push
+git push (This would push changes made to the repo)
 
 
 To commit, use git commit -m (message) ‘themessage’ 
@@ -60,9 +60,12 @@ heroku config - use to list configuration
 heroku logs
 
 ===Security===
-We Cryptojs for hashing when it comes to Security (This is the node.js actual way of securing our web application,
+We Cryptojs for Web Tokens when it comes to Security (This is the node.js actual way of securing our web application,
 there are better ways to doing this using some libraies out there, the one we'd be using is jsonwebtoken).
 npm i crypto-js --save (use --save-dev for saving the dependency as a dev dependency).
 npm i jsonwebtoken --save
 You can validate your token from jwt.io by pasting in the signed data.
+--Standard way to storing a user password is to Hash it, usually this can be done in the manual(HARD) way, but
+we'd be using a library called "bcrypt", there are several ones out there but we'd be sticking with bcryptjs.
+npm i bcryptjs --save
 

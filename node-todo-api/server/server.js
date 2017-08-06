@@ -5,7 +5,10 @@ const validator = require('validator');
 
 var connect = require('../utils/dbConnection');
 const authToken = require('../utils/genAuthToken');
-const {findByToken} = require('../middleware/authenticate');
+const { authenticate } = require('../middleware/authenticate');
+const { loginUser } = require('../middleware/login');
+const { logoutUser } = require('../middleware/logout');
+
 
 var app = express();
 var connection;
@@ -141,12 +144,17 @@ app.patch('/todos/:id', (req, res) => {
 
 //Takes URL and the callback parameter
 app.post('/newuser', (req, res) => {
-    var postData = { uname: req.body.username, upassword: req.body.password, uage: req.body.age, location: req.body.location };
     var atoken = authToken.generateAuthToken(req.body.username);
+    var hash = authToken.hashPassword(req.body.password);
+    var postData = {
+        uname: req.body.username, upassword: hash,
+        uage: req.body.age, location: req.body.location,
+        token: atoken, access: 'auth'
+    };
 
     connect.dbConn.then(function (conn) {
         connection = conn;
-        console.log('Token from generateAuthToken', atoken);
+        console.log('Post Data', hash);
         if (validator.isEmail(req.body.username)) {
             return conn.query('INSERT INTO users SET ?', postData);
         } else {
@@ -164,8 +172,22 @@ app.post('/newuser', (req, res) => {
     console.log("body_request", req.body);
 });
 
+//Route to login users
+app.post('/api/users/login', loginUser);
+
+//Logout Route
+app.delete('/api/users/logout', logoutUser);
+
+/* app.post('/api/users/log', (req, res) => {
+    var body = _.pick(req.body, ['username', 'password']);
+
+    res.send(body);
+}); */
+
 //API route to verify authentication per user.
-app.get('/users/me', findByToken);
+app.get('/users/me', authenticate, (req, res) => {
+    res.send({"username":req.username});
+});
 
 app.listen(port, () => {
     console.log(`Started on port: ${port}`);
