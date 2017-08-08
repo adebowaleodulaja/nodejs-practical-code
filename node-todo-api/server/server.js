@@ -77,13 +77,13 @@ app.get('/todos/:id', authenticate, (req, res) => {
         var sqlString = `SELECT uname, token FROM users WHERE uname = '${req.username}' `;
         return conn.query(sqlString);
     }).then((rows) => {
-        if (rows.length != 0) {
+        if (rows.length !== 0) {
             var sql = `SELECT * FROM todos WHERE id = ${connection.escape(req.params.id)} AND username = ${connection.escape(req.username)}`;
             var result = connection.query(sql);
             return result;
         }
     }).then((rows) => {
-        if (rows.length != 0) {
+        if (rows.length !== 0) {
             res.send({ todos: rows });
         } else {
             res.status(404).send({
@@ -106,11 +106,14 @@ app.delete('/todos/:id', authenticate, (req, res) => {
         var sqlString = `SELECT uname, token FROM users WHERE uname = '${req.username}' `;
         return conn.query(sqlString);
     }).then((rows) => {
-        if (rows.length != 0) {
+        if (rows.length !== 0) {
             var sql = `DELETE FROM todos WHERE id = ${connection.escape(req.params.id)} AND username = ${connection.escape(req.username)}`;
+            var result = connection.query(sql);
+            console.log(sql);
+            return result;
         }
     }).then((rows) => {
-        if (rows.length != 0) {
+        if (rows.length !== 0) {
             res.send({
                 message: "Request Successful",
                 result: rows.affectedRows + " row(s) was deleted!"
@@ -124,6 +127,7 @@ app.delete('/todos/:id', authenticate, (req, res) => {
     }).catch((error) => {
         res.status(400).send(error);
         console.log('An error occurred...' + error);
+        throw error;
     });
 });
 
