@@ -18,16 +18,24 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 //Takes URL and the callback parameter
-app.post('/todos', (req, res) => {
-    var postData = { text: req.body.text };
+app.post('/todos', authenticate, (req, res) => {
+    //if (req.username !== ""){}
+    var sqlString = `SELECT uname, token FROM users WHERE uname = '${req.username}' `;
     connect.dbConn.then(function (conn) {
         connection = conn;
-        return conn.query('INSERT INTO todos SET ?', postData);
+        return conn.query(sqlString);
     }).then(function (rows) {
-        res.send({ message: 'Data has been inserted successfully' });
-        console.log('Data inserted...');
-        console.log(rows);
+        var postData = { text: req.body.text, username: req.username };
+        if (rows.length !== 0) {
+            var insert = connection.query('INSERT INTO todos SET ?', postData);
+            console.log('Data inserted...');
+            return insert;
+        } else {
+            res.status(401).send({ message: 'You are not authenticated' });
+        }
         // connection.end();
+    }).then((rows) => {
+        res.send({ message: 'Data has been inserted successfully' });
     }).catch((error) => {
         res.status(400).send(error);
         console.log('An error occurred...' + error);
@@ -38,35 +46,46 @@ app.post('/todos', (req, res) => {
 });
 
 //Get all todos
-app.get('/todos', (req, res) => {
+app.get('/todos', authenticate, (req, res) => {
+    var sqlString = `SELECT uname, token FROM users WHERE uname = '${req.username}' `;
     connect.dbConn.then((conn) => {
-        return conn.query('SELECT * FROM todos');
+        connection = conn;
+        return conn.query(sqlString);
     }).then((rows) => {
-        /*for (var i in rows) {
-            //res.json(rows);
-            //todos = {id: rows[i].id, text: rows[i].text, completed: rows[i].completed, completedAt: rows[i].completedAt};
-        }*/
+        if (rows.length !== 0) {
+            var selectTodo = connection.query(`SELECT * FROM todos WHERE username = '${req.username}'`);
+            console.log('Iniside get todos, Data Found...');
+            return selectTodo;
+        } else {
+            res.status(401).send({ message: 'You are not authenticated' });
+        }
+    }).then((rows) => {
         res.send({ todos: rows });
-        //res.send({id: rows[i].id, text: rows[i].text, completed: rows[i].completed, completedAt: rows[i].completedAt});
     }).catch((error) => {
         res.status(400).send(error);
         console.log('An error occurred...' + error);
+        throw error;
         //connection.end();
     });
 });
 
 //Get specific todos
-app.get('/todos/:id', (req, res) => {
+app.get('/todos/:id', authenticate, (req, res) => {
     //res.send(req.params);
     connect.dbConn.then((conn) => {
-        var sql = `SELECT * FROM todos WHERE id = ${conn.escape(req.params.id)}`;
-        //console.log(`SQL String ${sql}`);
-        return conn.query(sql);
+        connection = conn;
+        var sqlString = `SELECT uname, token FROM users WHERE uname = '${req.username}' `;
+        return conn.query(sqlString);
+    }).then((rows) => {
+        if (rows.length != 0) {
+            var sql = `SELECT * FROM todos WHERE id = ${connection.escape(req.params.id)} AND username = ${connection.escape(req.username)}`;
+            var result = connection.query(sql);
+            return result;
+        }
     }).then((rows) => {
         if (rows.length != 0) {
             res.send({ todos: rows });
-        }
-        else {
+        } else {
             res.status(404).send({
                 message: "Request failed",
                 reason: "No such todo with id " + req.params.id
@@ -80,20 +99,23 @@ app.get('/todos/:id', (req, res) => {
 });
 
 //Delete a todo
-app.get('/todos/:id', (req, res) => {
+app.delete('/todos/:id', authenticate, (req, res) => {
     //res.send(req.params);
     connect.dbConn.then((conn) => {
-        var sql = `DELETE FROM todos WHERE id = ${conn.escape(req.params.id)}`;
-        //console.log(`SQL String ${sql}`);
-        return conn.query(sql);
+        connection = conn;
+        var sqlString = `SELECT uname, token FROM users WHERE uname = '${req.username}' `;
+        return conn.query(sqlString);
+    }).then((rows) => {
+        if (rows.length != 0) {
+            var sql = `DELETE FROM todos WHERE id = ${connection.escape(req.params.id)} AND username = ${connection.escape(req.username)}`;
+        }
     }).then((rows) => {
         if (rows.length != 0) {
             res.send({
                 message: "Request Successful",
                 result: rows.affectedRows + " row(s) was deleted!"
             });
-        }
-        else {
+        } else {
             res.status(404).send({
                 message: "Request Failed",
                 reason: "No such todo with id " + req.params.id
@@ -186,7 +208,7 @@ app.delete('/api/users/logout', logoutUser);
 
 //API route to verify authentication per user.
 app.get('/users/me', authenticate, (req, res) => {
-    res.send({"username":req.username});
+    res.send({ "username": req.username });
 });
 
 app.listen(port, () => {

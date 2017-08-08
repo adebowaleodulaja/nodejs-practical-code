@@ -8,7 +8,7 @@ const { verifyAuthToken } = require('../utils/genAuthToken');
 
 var authenticate = function (req, res, next) {
     var token = req.header('x-auth');
-    var decoded;
+    var decoded, username;
 
     try {
         decoded = verifyAuthToken(token);
@@ -20,20 +20,26 @@ var authenticate = function (req, res, next) {
 
     connect.dbConn.then((conn) => {
         //var sql = `SELECT * FROM users WHERE token = ${conn.escape(token)} AND uname = ${conn.escape(decoded.username)}`;
-        var sql = `SELECT * FROM users WHERE uname = ${conn.escape(decoded.username)}`;
-        return conn.query(sql);
-    }).then((rows) => {
-        if (rows.length != 0) {
-            //res.send({ todos: rows });
-            req.token = token;
-            req.username = decoded.username;
-            next();
+        if (decoded !== undefined) {
+            var sql = `SELECT * FROM users WHERE uname = ${conn.escape(decoded.username)}`;
+            return conn.query(sql);
         }
-        else {
-            res.status(401).send({
-                message: "Request failed",
-                reason: "No such token associated to a user "
-            });
+    }).then((rows) => {
+        if (rows !== undefined) {
+            if (rows.length != 0) {
+                //res.send({ todos: rows });
+                req.token = token;
+                req.username = decoded.username;
+                next();
+            }
+            else {
+                res.status(401).send({
+                    message: "Request failed",
+                    reason: "No such token associated to a user "
+                });
+            }
+        } else {
+            res.status(401).send({ message: 'You are not authenticated!' });
         }
     }).catch((error) => {
         res.status(400).send(error);
