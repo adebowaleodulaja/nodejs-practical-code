@@ -1,16 +1,19 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const config = require('../server/config/config.json');
 
+var env = process.env.NODE_ENV || 'development';
+var envConfig = config[env];
 var generateAuthToken = function (username) {
     var access = 'auth';
-    var token = jwt.sign({ username, access }, 'abc123').toString();
-    //console.log(token);
+    var token = jwt.sign({ username, access }, envConfig.JWT_SECRET).toString();
+    //console.log("The token ",token);
 
     return token;
 };
 
 var verifyAuthToken = function (tokenToVerify) {
-    return jwt.verify(tokenToVerify, 'abc123');
+    return jwt.verify(tokenToVerify, envConfig.JWT_SECRET);
 };
 
 var hashPassword = function (yourPassword) {
