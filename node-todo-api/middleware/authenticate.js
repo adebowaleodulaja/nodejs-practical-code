@@ -15,7 +15,8 @@ var authenticate = function (req, res, next) {
         //var decoded = jwt.verify(token, 'abc123');
         console.log('Inside authenticate, Decoded value is: ', decoded);
     } catch (error) {
-
+        console.log("Error occured inisde authenticate.js "+error);
+        throw error;
     }
 
     connect.dbConn.then((conn) => {

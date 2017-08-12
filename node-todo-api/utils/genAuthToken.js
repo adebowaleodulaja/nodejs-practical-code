@@ -5,15 +5,27 @@ const config = require('../server/config/config.json');
 var env = process.env.NODE_ENV || 'development';
 var envConfig = config[env];
 var generateAuthToken = function (username) {
-    var access = 'auth';
-    var token = jwt.sign({ username, access }, envConfig.JWT_SECRET).toString();
-    //console.log("The token ",token);
+    if (env === 'development' || env === 'test') {
+        var access = 'auth';
+        var token = jwt.sign({ username, access }, envConfig.JWT_SECRET).toString();
+        //console.log("The token ", envConfig.JWT_SECRET);
+    } else {
+        var access = 'auth';
+        var token = jwt.sign({ username, access }, process.env.JWT_SECRET).toString();
+        //console.log("The token ", process.env.JWT_SECRET);
+    }
 
     return token;
 };
 
 var verifyAuthToken = function (tokenToVerify) {
-    return jwt.verify(tokenToVerify, envConfig.JWT_SECRET);
+    var jwtValue;
+    if(env === 'development' || env === 'test'){
+        jwtValue = jwt.verify(tokenToVerify, envConfig.JWT_SECRET);
+    }else{
+        jwtValue = jwt.verify(tokenToVerify, process.env.JWT_SECRET)
+    }
+    return jwtValue;
 };
 
 var hashPassword = function (yourPassword) {

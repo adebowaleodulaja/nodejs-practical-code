@@ -58,6 +58,7 @@ Installed Expect (for assertions) mocha (for the test swift) npm i install expec
 3.  Setup a database.
 heroku config - use to list configuration
 heroku logs
+You can use "heroku run bash" to see list of files and folder inside heroku.
 
 ===Security===
 We Cryptojs for Web Tokens when it comes to Security (This is the node.js actual way of securing our web application,

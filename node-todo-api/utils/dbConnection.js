@@ -19,6 +19,15 @@ if (env === 'development' || env === 'test') {
         console.log('Inside dbConnection.js, Unable to connect...' + error);
     });
     //console.log(Object.keys(envConfig));
+} else {
+   var dbConn = mysql.createConnection(process.env.JAWSDB_URL)
+    .then(function (conn) {
+        return connection = conn;
+        //console.log('Connection ID... ' + connection.threadId);
+        //console.log(connection.query('SELECT COUNT(*) FROM users'));
+    }).catch((error) => {
+        console.log('Inside dbConnection.js, Unable to connect...' + error);
+    });
 }
 
 module.exports.dbConn = dbConn;
