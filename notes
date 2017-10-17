@@ -23,11 +23,12 @@ Express- framework in nodejs to build web app.
 hbs is a templating framework. Under hbs, we have what we called partial which is a partial piece of a website.
 
 =====GIT====
-git init - this needs to be executed from the root of your project
-git add . - use this to tell Git the files you want to keep track of(. will track all files and folders in the working dir).
-git status - to get the status of your git repo
-git commit -am 'comment'
-git push (This would push changes made to the repo)
+Git for Project
+1. git init (to be run in the project dir)
+2. git add .
+3. git commit -m “the_message”
+4. git remote add origin “git repo url” 
+5. git push -u origin master
 
 
 To commit, use git commit -m (message) ‘themessage’ 
@@ -44,7 +45,7 @@ To specify where the ssh file leaves you enter - ssh-add ~/ .ssh/id_rsa
 We’d be installing a module called mochajs.org
 install it as npm install mocha —save-dev
 
-Running the code using nodemon for mocha, use nodemon —exec ‘name of command’ e. nodemon —exec ’nom test’
+Running the code using nodemon for mocha, use nodemon —exec ‘name of command’ e.g nodemon —exec ’nom test’
 
 ===Testing the TODO App===
 Installed Expect (for assertions) mocha (for the test swift) npm i install expect mocha superset —save-dev
@@ -61,7 +62,7 @@ heroku logs
 You can use "heroku run bash" to see list of files and folder inside heroku.
 
 ===Security===
-We Cryptojs for Web Tokens when it comes to Security (This is the node.js actual way of securing our web application,
+We use Cryptojs for Web Tokens when it comes to Security (This is the node.js actual way of securing our web application,
 there are better ways to doing this using some libraies out there, the one we'd be using is jsonwebtoken).
 npm i crypto-js --save (use --save-dev for saving the dependency as a dev dependency).
 npm i jsonwebtoken --save
